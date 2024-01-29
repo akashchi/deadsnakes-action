@@ -63,7 +63,10 @@ def main() -> int:
     groups = (
         Group.make(
             f'add ppa {ppa}',
-            ('sudo', 'add-apt-repository', '--yes', ppa),
+            # If the '--no-update' is not set, and the underlying update fails, index files fall back to the old ones
+            ('sudo', 'add-apt-repository', '--yes', '--no-update', ppa),
+            # This way the apt-get command should retry if problems occur
+            ('sudo', 'apt-get', 'update')
         ),
         Group.make(
             f'install {py}',
